@@ -24,4 +24,4 @@ content while the daemon in the background continuously keeps generating an
 equivalent html that you can view in a browser. 
 
 At this time the html file needs to be manually refreshed. Although an
-auot-update feature is in the works.
+auto-update feature is in the works.
