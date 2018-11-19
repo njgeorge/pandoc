@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/fsnotify/fsnotify"
@@ -41,7 +42,10 @@ func Convert(path string) {
 		log.Fatal(err)
 	}
 
-	opath := strings.TrimSuffix(path, ".md") + ".html"
+	_, fname := filepath.Split(path)
+	opath := dst + "/" + strings.TrimSuffix(fname, ".md") + ".html"
+	log.Println(opath)
+
 	file, err := os.Create(opath)
 	if err != nil {
 		log.Fatal(err)
@@ -69,12 +73,13 @@ func FilterEvents(watcher *fsnotify.Watcher) {
 	}
 }
 
+var src, dst string
+
 func main() {
-	var src, dst string
 	var dbg bool
 
-	flag.StringVar(&src, "src", "", "path to source files")
-	flag.StringVar(&dst, "dst", "", "path to destination files")
+	flag.StringVar(&src, "src", "", "path to source files (req.)")
+	flag.StringVar(&dst, "dst", "", "path to destination files (defaults to src if unspecified)")
 	flag.BoolVar(&dbg, "debug", false, "specity to enable debug mode")
 
 	flag.Parse()
@@ -84,9 +89,13 @@ func main() {
 		log.SetFlags(log.Lshortfile)
 	}
 
-	if src == "" || dst == "" {
+	if src == "" {
 		flag.PrintDefaults()
-		log.Fatal("src and dst are required.")
+		log.Fatal("-src is a required argument.")
+	}
+
+	if dst == "" {
+		dst = src
 	}
 
 	watcher, err := fsnotify.NewWatcher()
