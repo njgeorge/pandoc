@@ -44,7 +44,6 @@ func Convert(path string) {
 
 	_, fname := filepath.Split(path)
 	opath := dst + "/" + strings.TrimSuffix(fname, ".md") + ".html"
-	log.Println(opath)
 
 	file, err := os.Create(opath)
 	if err != nil {
